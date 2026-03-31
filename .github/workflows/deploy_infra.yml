@@ -1,0 +1,54 @@
+name: Terraform Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - stage
+
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: us-east-1
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # AWS Credentials from GitHub Secrets
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Decide which tfvars file to use
+      - name: Select tfvars file based on branch
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            echo "TFVARS_FILE=prod-terraform.tfvars" >> $GITHUB_ENV
+          else
+            echo "TFVARS_FILE=stage-terraform.tfvars" >> $GITHUB_ENV
+          fi
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -var-file=${TFVARS_FILE}
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -var-file=${TFVARS_FILE}
