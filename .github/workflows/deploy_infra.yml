@@ -37,9 +37,16 @@ jobs:
           else
             echo "TFVARS_FILE=stage-terraform.tfvars" >> $GITHUB_ENV
           fi
-          
+
+      - name: Terraform Init
+        run: terraform init      
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -var-file=${TFVARS_FILE}
+        
 
       - name: Terraform Destroy
         run: terraform destroy -auto-approve -var-file=${TFVARS_FILE}
-
-      
