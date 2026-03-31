@@ -9,7 +9,6 @@ variable "vpc_id" {}
 variable "subnet_id" {}
 variable "ami_id" {}
 variable "key_name" {}
-
 variable "db_name" {}
 variable "engine" { default = "mysql" }
 variable "instance_class" { default = "db.t3.micro" }

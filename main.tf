@@ -14,8 +14,8 @@ module "rds" {
   source         = "git::https://github.com/deepika81aiml-collab/Assignments.git//modules/rds?ref=main"  
   db_name        = var.db_name
   engine         = var.engine
-  username       = "admin"
-  password       = "Password123!"
+  username       = var.username
+  password       = var.password
   vpc_id         = var.vpc_id
 }
 
