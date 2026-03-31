@@ -1,7 +1,6 @@
  variable "region" {}
 # variable "public_subnet" { default = "subnet-0123456789abcdef0" }
 # variable "ami" { default = "ami-0123456789abcdef0" }    
-
 # variable "vpc_id" {}
 # variable "subnet_id" {}
 # variable "ami_id" {}
@@ -16,6 +15,4 @@ variable "engine" { default = "mysql" }
 variable "instance_class" { default = "db.t3.micro" }
 variable "username" {}
 variable "password" {}
-# variable "private_subnets" { type = list(string) }
 variable "lambda_source_path" {}
-

@@ -1,7 +1,7 @@
 
 
 module "sqs" {
-source = "git::https://github.com/deepika81aiml-collab/Assignments.git//modules/sqs?ref=main"
+  source = "git::https://github.com/deepika81aiml-collab/Assignments.git//modules/sqs?ref=main"
   queue_name  = "demo-queue"
 }
 
@@ -16,19 +16,19 @@ module "rds" {
   engine         = var.engine
   username       = "admin"
   password       = "Password123!"
- vpc_id         = var.vpc_id
+  vpc_id         = var.vpc_id
 }
 
 module "lambda" {
   source        = "git::https://github.com/deepika81aiml-collab/Assignments.git//modules/lambda?ref=main"
- function_name      = "hello-world-lambda"
+  function_name      = "hello-world-lambda"
   lambda_source_path = "${path.root}/lambda"
 }
 
 
 module "instance" {
   source         = "git::https://github.com/deepika81aiml-collab/Assignments.git//modules/instance?ref=main"
-instance_name = "my-ec2"
+  instance_name = "my-ec2"
   ami_id        = var.ami_id
   instance_type = "t2.micro"
   subnet_id     = var.subnet_id
