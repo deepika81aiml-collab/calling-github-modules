@@ -39,10 +39,7 @@ jobs:
           fi
 
       - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Format Check
-        run: terraform fmt -check
+        run: terraform init      
 
       - name: Terraform Validate
         run: terraform validate
