@@ -39,7 +39,7 @@ jobs:
       # Decide tfvars based on branch chosen when running workflow
       - name: Select tfvars file
         run: |
-          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+          if [[ "${GITHUB_REF}" == "refs/heads/stage" ]]; then
             echo "TFVARS_FILE=prod-terraform.tfvars" >> $GITHUB_ENV
             echo "Destroying PROD infrastructure"
           else
