@@ -32,7 +32,7 @@ jobs:
       # Decide which tfvars file to use
       - name: Select tfvars file based on branch
         run: |
-          if [[ "${GITHUB_REF}" == "refs/heads/stage" ]]; then
+          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
             echo "TFVARS_FILE=prod-terraform.tfvars" >> $GITHUB_ENV
           else
             echo "TFVARS_FILE=stage-terraform.tfvars" >> $GITHUB_ENV
