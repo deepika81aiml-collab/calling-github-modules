@@ -1,5 +1,3 @@
-
-
 # ---------------- VPC MODULE ----------------
 module "vpc" {
   source = "git::https://github.com/deepika81aiml-collab/Assignments.git//modules/vpc?ref=main"
@@ -23,7 +21,7 @@ module "vpc" {
 
 # ---------------- EC2 MODULE ----------------
 module "instance" {
-  source         = "git::https://github.com/deepika81aiml-collab/Assignments.git//modules/instance?ref=main"
+  source = "git::https://github.com/deepika81aiml-collab/Assignments.git//modules/instance?ref=main"
   instance_name    = var.instance_name
   ami_id           = var.ami_id
   instance_type    = var.instance_type
@@ -37,29 +35,43 @@ module "instance" {
   }
 }
 
+# ---------------- RDS MODULE ----------------
 module "rds" {
-  source         = "git::https://github.com/deepika81aiml-collab/Assignments.git//modules/rds?ref=main"  
-  db_name        = var.db_name
-  engine         = var.engine
-  username       = var.username
+  source = "git::https://github.com/deepika81aiml-collab/Assignments.git//modules/rds?ref=main"
+
+ db_name           = var.db_name
+  username          = var.username
   password       = var.password
-  vpc_id         = var.vpc_id
+  vpc_id            = module.vpc.vpc_id
+  private_subnet_ids = module.vpc.private_subnet_ids
+  allowed_ec2_sg    = module.instance.security_group_id
+  tags = {
+    Project = "terraform-demo"
+    Env     = "dev"
+  }
 }
+
 module "sqs" {
   source = "git::https://github.com/deepika81aiml-collab/Assignments.git//modules/sqs?ref=main"
+  
   queue_name  = "demo-queue"
 }
 
 module "sns" {
   source = "git::https://github.com/deepika81aiml-collab/Assignments.git//modules/sns?ref=main"
+  
   topic_name = "demo-topic"
 }
 
+
+
 module "lambda" {
   source        = "git::https://github.com/deepika81aiml-collab/Assignments.git//modules/lambda?ref=main"
+ 
   function_name      = "hello-world-lambda"
   lambda_source_path = "${path.root}/lambda"
 }
+
 
 
 
