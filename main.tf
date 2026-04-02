@@ -2,7 +2,7 @@
 
 # ---------------- VPC MODULE ----------------
 module "vpc" {
-  source = "it::https://github.com/deepika81aiml-collab/Assignments.git//modules/vpc?ref=main"
+  source = "git::https://github.com/deepika81aiml-collab/Assignments.git//modules/vpc?ref=main"
 
   vpc_cidr = "10.0.0.0/16"
 
