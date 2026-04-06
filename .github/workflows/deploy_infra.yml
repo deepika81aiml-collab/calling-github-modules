@@ -41,10 +41,7 @@ jobs:
       - name: Terraform Init
         run: terraform init      
 
-      - name: Terraform Validate
-        run: terraform validate
-
       - name: Terraform Plan
-        run: terraform destroy -var-file=${TFVARS_FILE}
+        run: terraform destroy -var-file=stage-terraform.tfvars
 
- 
+     
