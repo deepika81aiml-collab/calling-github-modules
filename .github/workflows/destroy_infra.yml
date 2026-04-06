@@ -1,11 +1,18 @@
 name: Terraform Destroy
 
 on:
-  workflow_dispatch:   # manual trigger button in GitHub
+  workflow_dispatch:
     inputs:
       confirm_destroy:
         description: "Type DESTROY to confirm"
         required: true
+      environment:
+        description: "Select environment"
+        required: true
+        type: choice
+        options:
+          - dev
+          - prod
 
 jobs:
   terraform-destroy:
@@ -16,19 +23,32 @@ jobs:
       AWS_REGION: us-east-1
 
     steps:
+      # 🔐 Step 1 — manual confirmation safety
       - name: Check confirmation
         run: |
           if [[ "${{ github.event.inputs.confirm_destroy }}" != "DESTROY" ]]; then
-            echo "You must type DESTROY to run this workflow"
+            echo "❌ You must type DESTROY to run this workflow"
             exit 1
           fi
 
+      # 🔐 Step 2 — allow destroy only from main or stage branch
+      - name: Allow destroy only from main or stage branch
+        run: |
+          echo "Running from branch: ${{ github.ref_name }}"
+          if [[ "${{ github.ref_name }}" != "stage" && "${{ github.ref_name }}" != "main" ]]; then
+            echo "❌ Destroy allowed only from 'stage' or 'main' branch"
+            exit 1
+          fi
+
+      # 📥 Step 3 — checkout repository
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 🏗 Step 4 — install Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      # 🔑 Step 5 — configure AWS credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -36,19 +56,21 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # Decide tfvars based on branch chosen when running workflow
+      # 🎯 Step 6 — choose tfvars based on selected environment
       - name: Select tfvars file
         run: |
-          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+          if [[ "${{ github.event.inputs.environment }}" == "prod" ]]; then
             echo "TFVARS_FILE=prod-terraform.tfvars" >> $GITHUB_ENV
-            echo "Destroying PROD infrastructure"
+            echo "🚨 Destroying PROD infrastructure"
           else
             echo "TFVARS_FILE=stage-terraform.tfvars" >> $GITHUB_ENV
-            echo "Destroying DEV infrastructure"
+            echo "🔥 Destroying DEV infrastructure"
           fi
 
+      # ⚙️ Step 7 — Terraform Init
       - name: Terraform Init
         run: terraform init
 
+      # 💣 Step 8 — Terraform Destroy
       - name: Terraform Destroy
         run: terraform destroy -auto-approve -var-file=${TFVARS_FILE}
