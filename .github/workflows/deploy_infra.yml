@@ -45,7 +45,6 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -var-file=${TFVARS_FILE}
+        run: terraform destroy -var-file=${TFVARS_FILE}
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -var-file=${TFVARS_FILE}
+ 
